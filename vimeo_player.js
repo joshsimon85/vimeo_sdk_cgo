@@ -109,7 +109,6 @@ VimeoPlayer = {
     }
   },
   isValidCuePoint: function(seconds, cuePoint) {
-
     if (this.cueTimeA === null && this.cueTimeB === null) {
       return true;
     }
@@ -139,7 +138,7 @@ VimeoPlayer = {
     this.$inputB = $optionsBar.find('.set-b-input');
     this.$loopBtn = $optionsBar.find('.run-loop-button');
     this.$inputError = $optionsBar.find('.video-toolbar-error').first();
-    this.$playbackError = self.$($optionsBar.find('.video-toolbar-error').get(1));
+    this.$playbackError = this.$($optionsBar.find('.video-toolbar-error').get(1));
   },
   checkOptionsBarStatus: function($optionsBar) {
     if (this.optionsId !== $optionsBar.attr('data-options')) {
@@ -286,6 +285,7 @@ VimeoPlayer = {
 
     this.checkPlayerStatus($iframe);
     this.checkOptionsBarStatus($optionsBar);
+    this.resetErrors();
 
     if (loopValidation.error === true) {
       this.$inputError.append(loopValidation.message);
