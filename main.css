@@ -171,4 +171,5 @@ body {
 
 .auth-user-bookmark {
   color: blue;
+  cursor: pointer;
 }

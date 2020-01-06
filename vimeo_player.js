@@ -40,6 +40,9 @@ VimeoPlayer = {
   initialLoop: true,
   cueIdA: null,
   cueIdB: null,
+  getVideoDuration: function() {
+    return this.player.getDuration();
+  },
   addToolBarError: function(error) {
     this.$inputError.append(error);
   },
@@ -59,8 +62,13 @@ VimeoPlayer = {
     this.$inputA.val('');
     this.$inputB.val('');
   },
-  resetPlayerState: function() {
+  unloadPlayer: function() {
     this.player.unload();
+  },
+  setCurrentTime: function(seconds) {
+    return this.player.setCurrentTime(seconds);
+  },
+  resetPlayerState: function() {
     this.resetErrors();
     this.resetInputValues();
     this.resetSpeedSelect();
@@ -383,6 +391,7 @@ VimeoPlayer = {
   initializePlayer: function(player, events) {
     this.player = new Vimeo.Player(player);
     this.setPlayerId();
+
     if (events === false) { return; }
 
     this.bindPlayerEvents();
