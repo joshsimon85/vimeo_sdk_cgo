@@ -63,6 +63,7 @@ VimeoPlayer = {
     this.player.unload();
     this.resetErrors();
     this.resetInputValues();
+    this.resetSpeedSelect();
     this.loop = false;
     this.playing = false;
     this.initialLoop = true;
@@ -77,6 +78,7 @@ VimeoPlayer = {
     this.$inputB = null;
     this.$inputError = null;
     this.$playbackError = null;
+    this.optionsId = null;
   },
   checkPlayerStatus: function(player) {
     var id;
@@ -141,8 +143,11 @@ VimeoPlayer = {
     this.$playbackError = this.$($optionsBar.find('.video-toolbar-error').get(1));
   },
   checkOptionsBarStatus: function($optionsBar) {
-    if (this.optionsId !== $optionsBar.attr('data-options')) {
+    var id = $optionsBar.attr('data-options');
+
+    if (this.optionsId !== id) {
       this.cacheBtns($optionsBar);
+      this.optionsId = id;
     }
   },
   addCuePoint: function(seconds, cuePoint) {
@@ -333,6 +338,11 @@ VimeoPlayer = {
   setPlaybackRateError: function(error) {
     this.$playbackError.append(error);
   },
+  resetSpeedSelect: function() {
+    var $optionsBar = this.$('[data-options="' + this.optionsId + '"]');
+
+    $optionsBar.find('.video-speed-select').get(0).reset();
+  },
   setSpeed: function(e) {
     var self = this;
     var $target = this.$(e.target);
@@ -346,6 +356,7 @@ VimeoPlayer = {
     this.player.setPlaybackRate(+speed).then(function() {
       self.removePlaybackErrors();
     }).catch(function(error) {
+      self.resetSpeedSelect();
       self.removePlaybackErrors();
       self.setPlaybackRateError(error.message);
     });
@@ -369,9 +380,11 @@ VimeoPlayer = {
   setPlayerId: function() {
     this.playerId = this.$(this.player.element).attr('src');
   },
-  initializePlayer: function(player) {
+  initializePlayer: function(player, events) {
     this.player = new Vimeo.Player(player);
     this.setPlayerId();
+    if (events === false) { return; }
+
     this.bindPlayerEvents();
   },
   init: function() {

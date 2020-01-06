@@ -165,3 +165,10 @@ body {
 }
 
 /*END MOBILE STYLING */
+
+
+/* anchor tag links */
+
+.auth-user-bookmark {
+  color: blue;
+}
