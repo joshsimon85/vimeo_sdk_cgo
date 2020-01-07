@@ -1,10 +1,9 @@
 var VimeoBookmarks = {
   $: jQuery,
-  duration: 500,
+  duration: 700,
   offset: 100,
   parseSeconds: function(time) {
-    var parts = time.split(' ');
-    var timeParts = parts[0].split(':');
+    var timeParts = time.split(':');
 
     return (+timeParts[0] * 60) + (+timeParts[1]);
   },
@@ -18,52 +17,30 @@ var VimeoBookmarks = {
     );
   },
   setStartTime: function(e) {
+    e.preventDefault();
+
     var self = this;
     var $target = this.$(e.target);
-    var player = $target.parents('.video-time-bookmarks').next('.cgo-vp-video-wrapper');
-    var seconds = this.parseSeconds($target.text());
+    var $iframe = $target.parents('.video-time-bookmarks').next('.cgo-vp-video-wrapper');
+    var seconds = this.parseSeconds($target.attr('data-time'));
+    var $optionsBar = $iframe.next('.ab-loop-wrapper');
 
-    VimeoPlayer.setCurrentTime(seconds).then(function() {
-      self.scrollTo(player);
-    });
+    VimeoPlayer.checkPlayerStatus($iframe);
+    VimeoPlayer.checkOptionsBarStatus($optionsBar);
+    VimeoPlayer.removeCuePoints();
+    VimeoPlayer.setStartTime(seconds);
+
+    this.scrollTo($iframe);
   },
   initializeVimeoPlayer: function() {
     var player = this.$('.video-time-bookmarks').next('.cgo-vp-video-wrapper');
     VimeoPlayer.initializePlayer(player);
   },
-  addClassToBookmarks: function(duration) {
-    var $trs = this.$('.video-time-bookmarks').find('tr').slice(1);
-    var self = this;
-
-    $trs.each(function() {
-      var $tr = self.$(this);
-      var $td = self.$(this).find('td:first-of-type');
-      var time = self.parseSeconds($td.text());
-
-      if (time <= duration) {
-        $tr.addClass('auth-user-bookmark');
-      }
-    });
-  },
   bind: function() {
-    self.$('.auth-user-bookmark').on('click', this.setStartTime.bind(this));
-  },
-  locateBookmarks: function() {
-    var $bookMarks = this.$('.video-time-bookmarks');
-    var self = this;
-
-    if ($bookMarks.length > 0) {
-      this.initializeVimeoPlayer();
-      VimeoPlayer.getVideoDuration().then(function(duration) {
-        self.addClassToBookmarks(duration);
-        VimeoPlayer.unloadPlayer();
-        self.bind();
-      });
-    }
-
+    self.$('.video-time-bookmarks').on('click', 'a', this.setStartTime.bind(this));
   },
   init: function() {
-    this.locateBookmarks();
+    this.bind();
   }
 };
 

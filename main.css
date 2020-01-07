@@ -173,3 +173,7 @@ body {
   color: blue;
   cursor: pointer;
 }
+
+.ab-loop-running {
+  outline: 1px solid red;
+}

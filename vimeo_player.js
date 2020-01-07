@@ -39,7 +39,9 @@ VimeoPlayer = {
   playing: false,
   initialLoop: true,
   cueIdA: null,
+  cueTimeA: null,
   cueIdB: null,
+  cueTimeB: null,
   resetSpeedSelect: function() {
     var $optionsBar = this.$('[data-options="' + this.optionsId + '"]');
 
@@ -185,6 +187,9 @@ VimeoPlayer = {
     }
     this.addToolBarError(error);
   },
+  setStartTime: function(seconds) {
+    this.player.setCurrentTime(seconds);
+  },
   setCuePoint: function(e) {
     e.preventDefault();
     var $target = this.$(e.target);
@@ -220,23 +225,32 @@ VimeoPlayer = {
 
     if (this.playing === false && this.loop === false) {
       this.$loopBtn.val(RUN);
+      this.toggleRunningClass(false);
     }
 
     if (this.playing === true && this.loop === false) {
       this.$loopBtn.val(RUN);
+      this.toggleRunningClass(false);
     }
 
     if (this.playing === true && this.loop === false) {
       this.$loopBtn.val(RUN);
+      this.toggleRunningClass(false);
     }
 
     if (this.playing === false && this.loop === true) {
       this.$loopBtn.val(RUN);
+      this.toggleRunningClass(false);
     }
 
     if (this.playing === true && this.loop === true) {
       this.$loopBtn.val(STOP);
+      this.toggleRunningClass(true);
     }
+  },
+  toggleRunningClass: function(bool) {
+    this.$inputA.toggleClass('ab-loop-running', bool);
+    this.$inputB.toggleClass('ab-loop-running', bool);
   },
   startLoop: function(e) {
     var self = this;
@@ -312,15 +326,28 @@ VimeoPlayer = {
       this.endLoop(e);
     }
   },
-  deleteCueItems: function() {
-    this.player.removeCuePoint(cueIdA);
-    this.player.removeCuePoint(cueIdB);
-    this.cueIdA = null;
-    this.cueIdB = null;
+  removeCuePoints: function() {
+    if (this.cueIdA) {
+      this.player.removeCuePoint(this.cueIdA);
+      this.cueIdA = null;
+      this.cueTimeA = null;
+    }
+
+    if (this.cueIdB) {
+      this.player.removeCuePoint(this.cueIdB);
+      this.cueIdB = null;
+      this.cueTimeB = null;
+    }
+  },
+  removeCuePoint: function(cueId) {
+    var id = cueId;
+
+    this.player.removeCuePoint(id);
   },
   removeLoop: function(e) {
     e.preventDefault();
 
+    var self = this;
     var $target = this.$(e.target);
     var $el = $target.parents('.ab-loop-wrapper');
     var $iframe = this.findIframeFromOptionsBar($target);
@@ -330,13 +357,10 @@ VimeoPlayer = {
     this.checkOptionsBarStatus($optionsBar);
     this.resetErrors();
     this.resetInputValues();
+    this.removeCuePoints();
 
     this.loop = false;
     this.initialLoop = true;
-    this.cueTimeA = null;
-    this.cueIdA = null;
-    this.cueTimeB = null;
-    this.cueIdB = null;
 
     this.changeLoopBtnState();
   },

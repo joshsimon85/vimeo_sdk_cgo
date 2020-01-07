@@ -4,6 +4,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js" charset="utf-8"></script>
   <link rel="stylesheet" href="main.css">
 </head>
+
 <body>
   <table class="video-time-bookmarks">
 <tbody>
@@ -12,12 +13,20 @@
 <th>Lesson Topic</th>
 </tr>
 <tr>
-<td>00:00 min</td>
-<td>Measures 1 through 5</td>
+<td>
+  <a data-time="00:00" href="#">00:00 min</a>
+</td>
+<td>
+  <a data-time="00:00" href="#">Measures 1 through 5</a>
+</td>
 </tr>
 <tr>
-<td>00:01 min</td>
-<td>Measures 6 through 9</td>
+<td>
+  <a data-time="00:01" href="#">00:01 min</a>
+</td>
+<td>
+  <a data-time="00:01" href="#">Measures 6 through 9</a>
+</td>
 </tr>
 <tr>
 <td>00:02 min</td>
@@ -46,7 +55,6 @@
 </tbody>
 </table>
 
-
   <div class="cgo-vp-video-wrapper">
     <iframe src="https://player.vimeo.com/video/56282283" width="100%" height="100%" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
   </div>
@@ -57,8 +65,8 @@
 
   <script src="https://player.vimeo.com/api/player.js"></script>
   <script src="vimeo_player.js" charset="utf-8"></script>
-  <!--
+
   <script src="vimeo_bookmark.js" charset="utf-8"></script>
-  -->
+
 </body>
 </html>
