@@ -45,8 +45,3 @@ var VimeoBookmarks = {
 };
 
 VimeoBookmarks.init();
-
-//this.$('.video-time-bookmarks').on('click', 'tr > td:first-of-type', this.setStartTime.bind(this));
-
-// steps first on page load we need to see if there are a tags under video-time-bookmarks
-// if there are we need to
