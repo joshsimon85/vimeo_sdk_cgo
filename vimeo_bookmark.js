@@ -28,8 +28,9 @@ var VimeoBookmarks = {
     VimeoPlayer.checkPlayerStatus($iframe);
     VimeoPlayer.checkOptionsBarStatus($optionsBar);
     VimeoPlayer.removeCuePoints();
-    VimeoPlayer.setStartTime(seconds);
-    VimeoPlayer.play();
+    VimeoPlayer.setStartTime(seconds).then(function() {
+      VimeoPlayer.play();
+    });
 
     this.scrollTo($iframe);
 

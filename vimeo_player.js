@@ -191,7 +191,7 @@ VimeoPlayer = {
     this.addToolBarError(error);
   },
   setStartTime: function(seconds) {
-    this.player.setCurrentTime(seconds);
+    return this.player.setCurrentTime(seconds);
   },
   setCuePoint: function(e) {
     e.preventDefault();
