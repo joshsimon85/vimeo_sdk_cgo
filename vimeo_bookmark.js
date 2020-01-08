@@ -29,15 +29,17 @@ var VimeoBookmarks = {
     VimeoPlayer.checkOptionsBarStatus($optionsBar);
     VimeoPlayer.removeCuePoints();
     VimeoPlayer.setStartTime(seconds);
+    VimeoPlayer.play();
 
     this.scrollTo($iframe);
+
   },
   initializeVimeoPlayer: function() {
     var player = this.$('.video-time-bookmarks').next('.cgo-vp-video-wrapper');
     VimeoPlayer.initializePlayer(player);
   },
   bind: function() {
-    self.$('.video-time-bookmarks').on('click', 'a', this.setStartTime.bind(this));
+    this.$('.video-time-bookmarks').on('click', 'a', this.setStartTime.bind(this));
   },
   init: function() {
     this.bind();

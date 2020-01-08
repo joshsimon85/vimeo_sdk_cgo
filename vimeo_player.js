@@ -42,6 +42,9 @@ VimeoPlayer = {
   cueTimeA: null,
   cueIdB: null,
   cueTimeB: null,
+  play: function() {
+    this.player.play();
+  },
   resetSpeedSelect: function() {
     var $optionsBar = this.$('[data-options="' + this.optionsId + '"]');
 
