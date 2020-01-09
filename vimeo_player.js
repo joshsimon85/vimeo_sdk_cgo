@@ -42,9 +42,6 @@ VimeoPlayer = {
   cueTimeA: null,
   cueIdB: null,
   cueTimeB: null,
-  play: function() {
-    this.player.play();
-  },
   resetSpeedSelect: function() {
     var $optionsBar = this.$('[data-options="' + this.optionsId + '"]');
 
@@ -90,7 +87,7 @@ VimeoPlayer = {
     this.$playbackError = null;
     this.optionsId = null;
   },
-  checkPlayerStatus: function(player) {
+  checkPlayerStatus: function(player, playerEvents) {
     var id;
 
     if (this.player) {
@@ -98,10 +95,10 @@ VimeoPlayer = {
 
       if (id !== this.playerId) {
         this.resetPlayerState();
-        this.initializePlayer(player);
+        this.initializePlayer(player, playerEvents);
       }
     } else {
-      this.initializePlayer(player);
+      this.initializePlayer(player, playerEvents);
     }
   },
   checkCuePointStatus: function(cuePoint) {
@@ -201,7 +198,7 @@ VimeoPlayer = {
     var cuePoint = $target.data('btn');
     var self = this;
 
-    this.checkPlayerStatus($iframe);
+    this.checkPlayerStatus($iframe, true);
     this.checkOptionsBarStatus($optionsBar);
     this.checkCuePointStatus(cuePoint);
 
@@ -218,7 +215,7 @@ VimeoPlayer = {
     this.playing = false;
     this.changeLoopBtnState();
   },
-  playerPlayingState: function(_) {
+  playerPlayingState: function() {
     this.playing = true;
     this.changeLoopBtnState();
   },
@@ -310,7 +307,7 @@ VimeoPlayer = {
     var $optionsBar = $target.parents('.ab-loop-wrapper');
     var loopValidation = this.isValidLoop();
 
-    this.checkPlayerStatus($iframe);
+    this.checkPlayerStatus($iframe, true);
     this.checkOptionsBarStatus($optionsBar);
     this.resetErrors();
 
@@ -356,7 +353,7 @@ VimeoPlayer = {
     var $iframe = this.findIframeFromOptionsBar($target);
     var $optionsBar = $target.parents('.ab-loop-wrapper');
 
-    this.checkPlayerStatus($iframe);
+    this.checkPlayerStatus($iframe, true);
     this.checkOptionsBarStatus($optionsBar);
     this.resetErrors();
     this.resetInputValues();
@@ -377,7 +374,7 @@ VimeoPlayer = {
     var $iframe = this.findIframeFromOptionsBar($target);
     var $optionsBar = $target.parents('.ab-loop-wrapper');
 
-    this.checkPlayerStatus($iframe);
+    this.checkPlayerStatus($iframe, true);
     this.checkOptionsBarStatus($optionsBar);
 
     this.player.setPlaybackRate(+speed).then(function() {
@@ -407,10 +404,13 @@ VimeoPlayer = {
   setPlayerId: function() {
     this.playerId = this.$(this.player.element).attr('src');
   },
-  initializePlayer: function(player) {
+  initializePlayer: function(player, playerEvents) {
     this.player = new Vimeo.Player(player);
     this.setPlayerId();
-    this.bindPlayerEvents();
+
+    if (playerEvents) {
+      this.bindPlayerEvents();
+    }
   },
   init: function() {
     View.addOptionsBar();

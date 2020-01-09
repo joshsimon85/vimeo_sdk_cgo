@@ -19,25 +19,21 @@ var VimeoBookmarks = {
   setStartTime: function(e) {
     e.preventDefault();
 
-    var self = this;
     var $target = this.$(e.target);
     var $iframe = $target.parents('.video-time-bookmarks').next('.cgo-vp-video-wrapper');
     var seconds = this.parseSeconds($target.attr('data-time'));
     var $optionsBar = $iframe.next('.ab-loop-wrapper');
 
-    VimeoPlayer.checkPlayerStatus($iframe);
-    VimeoPlayer.checkOptionsBarStatus($optionsBar);
+    VimeoPlayer.initializePlayer($iframe, false);
     VimeoPlayer.removeCuePoints();
-    VimeoPlayer.setStartTime(seconds).then(function() {
-      VimeoPlayer.play();
+    VimeoPlayer.player.pause().then(function() {
+      VimeoPlayer.setStartTime(seconds);
+    }).then(function() {
+        VimeoPlayer.player.play();
     });
 
     this.scrollTo($iframe);
 
-  },
-  initializeVimeoPlayer: function() {
-    var player = this.$('.video-time-bookmarks').next('.cgo-vp-video-wrapper');
-    VimeoPlayer.initializePlayer(player);
   },
   bind: function() {
     this.$('.video-time-bookmarks').on('click', 'a', this.setStartTime.bind(this));
