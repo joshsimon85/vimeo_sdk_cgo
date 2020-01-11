@@ -45,35 +45,55 @@ VimeoPlayer = {
   resetSpeedSelect: function() {
     var $optionsBar = this.$('[data-options="' + this.optionsId + '"]');
 
-    $optionsBar.find('.video-speed-select').get(0).reset();
+    if ($optionsBar.length === 1) {
+      $optionsBar.find('.video-speed-select').get(0).reset();
+      this.player.setPlaybackRate(1.0);
+    }
   },
   addToolBarError: function(error) {
     this.$inputError.append(error);
   },
   removeInputErrors: function() {
-    this.$inputA.removeClass('error');
-    this.$inputB.removeClass('error');
-    this.$inputError.text('');
+    if (this.$inputA) {
+      this.$inputA.removeClass('error');
+      this.$inputB.removeClass('error');
+      this.$inputError.text('');
+    }
   },
   removePlaybackErrors: function() {
-    this.$playbackError.text('');
+    if (this.$playbackError) {
+      this.$playbackError.text('');
+    }
   },
   resetErrors: function() {
     this.removeInputErrors();
     this.removePlaybackErrors();
   },
   resetInputValues: function() {
-    this.$inputA.val('');
-    this.$inputB.val('');
+    if (this.$inputA) {
+      this.$inputA.val('').toggleClass('ab-loop-running', false);
+      this.$inputB.val('').toggleClass('ab-loop-running', false);
+    }
   },
-  resetPlayerState: function() {
-    this.player.unload();
+  unloadPlayer: function(unload) {
+    if (unload === undefined) {
+      this.player.unload();
+    }
+  },
+  resetLoopBtn: function() {
+    if (this.$loopBtn) {
+      this.changeLoopBtnState();
+    }
+  },
+  resetPlayerState: function(unload) {
     this.resetErrors();
     this.resetInputValues();
     this.resetSpeedSelect();
+    this.unloadPlayer(unload);
     this.loop = false;
     this.playing = false;
     this.initialLoop = true;
+    this.resetLoopBtn();
     this.player = null;
     this.playerId = null;
     this.$loopBtn = null;
@@ -87,7 +107,7 @@ VimeoPlayer = {
     this.$playbackError = null;
     this.optionsId = null;
   },
-  checkPlayerStatus: function(player, playerEvents) {
+  checkPlayerStatus: function(player) {
     var id;
 
     if (this.player) {
@@ -95,10 +115,10 @@ VimeoPlayer = {
 
       if (id !== this.playerId) {
         this.resetPlayerState();
-        this.initializePlayer(player, playerEvents);
+        this.initializePlayer(player);
       }
     } else {
-      this.initializePlayer(player, playerEvents);
+      this.initializePlayer(player);
     }
   },
   checkCuePointStatus: function(cuePoint) {
@@ -198,7 +218,7 @@ VimeoPlayer = {
     var cuePoint = $target.data('btn');
     var self = this;
 
-    this.checkPlayerStatus($iframe, true);
+    this.checkPlayerStatus($iframe);
     this.checkOptionsBarStatus($optionsBar);
     this.checkCuePointStatus(cuePoint);
 
@@ -307,7 +327,7 @@ VimeoPlayer = {
     var $optionsBar = $target.parents('.ab-loop-wrapper');
     var loopValidation = this.isValidLoop();
 
-    this.checkPlayerStatus($iframe, true);
+    this.checkPlayerStatus($iframe);
     this.checkOptionsBarStatus($optionsBar);
     this.resetErrors();
 
@@ -353,7 +373,7 @@ VimeoPlayer = {
     var $iframe = this.findIframeFromOptionsBar($target);
     var $optionsBar = $target.parents('.ab-loop-wrapper');
 
-    this.checkPlayerStatus($iframe, true);
+    this.checkPlayerStatus($iframe);
     this.checkOptionsBarStatus($optionsBar);
     this.resetErrors();
     this.resetInputValues();
@@ -374,7 +394,7 @@ VimeoPlayer = {
     var $iframe = this.findIframeFromOptionsBar($target);
     var $optionsBar = $target.parents('.ab-loop-wrapper');
 
-    this.checkPlayerStatus($iframe, true);
+    this.checkPlayerStatus($iframe);
     this.checkOptionsBarStatus($optionsBar);
 
     this.player.setPlaybackRate(+speed).then(function() {
@@ -404,13 +424,10 @@ VimeoPlayer = {
   setPlayerId: function() {
     this.playerId = this.$(this.player.element).attr('src');
   },
-  initializePlayer: function(player, playerEvents) {
+  initializePlayer: function(player) {
     this.player = new Vimeo.Player(player);
     this.setPlayerId();
-
-    if (playerEvents) {
-      this.bindPlayerEvents();
-    }
+    this.bindPlayerEvents();
   },
   init: function() {
     View.addOptionsBar();

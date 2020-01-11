@@ -16,27 +16,30 @@ var VimeoBookmarks = {
       }, this.duration
     );
   },
-  setStartTime: function(e) {
-    e.preventDefault();
-
-    var $target = this.$(e.target);
-    var $iframe = $target.parents('.video-time-bookmarks').next('.cgo-vp-video-wrapper');
-    var seconds = this.parseSeconds($target.attr('data-time'));
-    var $optionsBar = $iframe.next('.ab-loop-wrapper');
-
-    VimeoPlayer.initializePlayer($iframe, false);
-    VimeoPlayer.removeCuePoints();
+  setUpPlayer: function($iframe) {
+    VimeoPlayer.resetPlayerState(false);
+    VimeoPlayer.initializePlayer($iframe);
+  },
+  setStartTimeAndPlay: function(seconds) {
     VimeoPlayer.player.pause().then(function() {
       VimeoPlayer.setStartTime(seconds);
     }).then(function() {
         VimeoPlayer.player.play();
     });
+  },
+  startPlayer: function(e) {
+    e.preventDefault();
 
+    var $target = this.$(e.target);
+    var $iframe = $target.parents('.video-time-bookmarks').next('.cgo-vp-video-wrapper');
+    var seconds = this.parseSeconds($target.attr('data-time'));
+
+    this.setUpPlayer($iframe);
+    this.setStartTimeAndPlay(seconds);
     this.scrollTo($iframe);
-
   },
   bind: function() {
-    this.$('.video-time-bookmarks').on('click', 'a', this.setStartTime.bind(this));
+    this.$('.video-time-bookmarks').on('click', 'a', this.startPlayer.bind(this));
   },
   init: function() {
     this.bind();
